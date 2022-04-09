@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { formValidate } from '../../utils/index'
+import http from '../../utils/http'
 export default {
   name: '',
   data () {
@@ -48,13 +50,18 @@ export default {
   },
   methods: {
     onSubmit () {
-      this.$refs.form.validate((valid) => {
+      formValidate(this, 'form')
+      .then(valid=>{
         if (valid) {
-          alert('submit!');
-        } else {
-          console.log('error submit!!');
-          return false;
+          return http.post('/user/login',{...this?.form})
         }
+      })
+      .then(res=>{
+        if(res?.code !==0){
+          this.errorMsg(res?.msg || '未知错误');
+          return
+        }
+        console.log(res?.data);
       })
     }
   }
