@@ -3,7 +3,7 @@ import { Message } from "element-ui";
 console.log(process.env.VUE_BASE__URL,'process.env');
 //默认配置
 const http = axios.create({
-    baseURL: process.env.VUE_BASE__URL || 'http://114.215.183.5:3335',
+    baseURL: process.env.VUE_BASE__URL || 'http://114.215.183.5:3334',
     withCredentials: true,
     timeout: 500000
 })
