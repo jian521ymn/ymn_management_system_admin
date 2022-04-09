@@ -26,7 +26,7 @@ export function getQueryObj(){
     if(!search){
         return {}
     }
-    const searchArr =search.slice(1,search.length-1).split('&')
+    const searchArr =search.slice(1,search.length).split('&')
     return searchArr.reduce((prev,next)=>{
         const [key,value] =next.split('=')
         prev[key]=value ;
