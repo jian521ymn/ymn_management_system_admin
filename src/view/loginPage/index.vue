@@ -51,7 +51,7 @@ export default {
   mounted () {
     http.get('/user/login')
     .then(res=>{
-      if(res?.code === 0){
+      if(res?.data?.code === 0){
         this.successMsg('cookie有效，登录')
       }
     })
