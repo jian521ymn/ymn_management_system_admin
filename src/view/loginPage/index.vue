@@ -48,6 +48,14 @@ export default {
       }
     }
   },
+  mounted () {
+    http.get('/user/login')
+    .then(res=>{
+      if(res?.code === 0){
+        this.successMsg('cookie有效，登录')
+      }
+    })
+  },
   methods: {
     onSubmit () {
       formValidate(this, 'form')
@@ -61,6 +69,7 @@ export default {
           this.errorMsg(res?.msg || '未知错误');
           return
         }
+        this.successMsg('登录成功！')
         console.log(res?.data);
       })
     }

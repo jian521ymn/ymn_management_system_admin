@@ -1,9 +1,9 @@
 import axios from "axios";
 import { Message } from "element-ui";
-console.log(process.env.VUE_BASE__URL,'process.env');
+console.log(process.env.NODE_ENV !== "production",'process.env');
 //默认配置
 const http = axios.create({
-    baseURL: process.env.VUE_BASE__URL || 'http://114.215.183.5:3334',
+    baseURL: process.env.NODE_ENV !== "production" ? '' : 'http://114.215.183.5:3334',
     withCredentials: true,
     timeout: 500000
 })

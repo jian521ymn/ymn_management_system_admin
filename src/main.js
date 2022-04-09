@@ -19,7 +19,7 @@ Vue.prototype.errorMsg=(text,config)=>{
 Vue.prototype.successMsg=(text,config)=>{
   Message({
     message: text,
-    type: 'ersucessror',
+    type: 'success',
     duration: 3 * 1000,
     ...config
   })
