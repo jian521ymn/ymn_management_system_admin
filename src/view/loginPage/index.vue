@@ -78,6 +78,7 @@ export default {
     jumpPage(params){
         const {token} = params
         const {callbackurl} =getQueryObj();
+        console.log(callbackurl,'callbackurl')
         if(callbackurl){
             window.location.href=`${callbackurl}?token=${token}`
         }else{
