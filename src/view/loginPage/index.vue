@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import { formValidate } from '../../utils/index'
-import http from '../../utils/http'
+import { formValidate,getQueryObj } from '../../utils/index'
+import http from '../../utils/http';
 export default {
   name: '',
   data () {
@@ -53,6 +53,7 @@ export default {
     .then(res=>{
       if(res?.data?.code === 0){
         this.successMsg('cookie有效，登录')
+        this.jumpPage(res?.data)
       }
     })
   },
@@ -70,8 +71,18 @@ export default {
           return
         }
         this.successMsg('登录成功！')
+        this.jumpPage(res?.data)
         console.log(res?.data);
       })
+    },
+    jumpPage(params){
+        const {token} = params
+        const {callbackurl} =getQueryObj();
+        if(callbackurl){
+            window.location.href=`${callbackurl}?token=${token}`
+        }else{
+            console.log('默认跳转逻辑')
+        }
     }
   }
 }

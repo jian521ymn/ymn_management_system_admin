@@ -17,3 +17,19 @@ export function formValidate(that,name){
         }
     })
 }
+
+/**
+ * 获取url上的search参数
+*/
+export function getQueryObj(){
+    const search =window.location.href.slice(window.location.href.indexOf('?'))
+    if(search){
+        return {}
+    }
+    const searchArr =search.slice(1,search.length-1).split('&')
+    return searchArr.reduce((prev,next)=>{
+        const [key,value] =next.split('=')
+        prev[key]=value ;
+        return prev
+    },{})
+}
