@@ -23,7 +23,7 @@ export function formValidate(that,name){
 */
 export function getQueryObj(){
     const search =window.location.href.slice(window.location.href.indexOf('?'))
-    if(search){
+    if(!search){
         return {}
     }
     const searchArr =search.slice(1,search.length-1).split('&')
