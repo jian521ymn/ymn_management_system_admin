@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { formValidate,getQueryObj, setQueryObj } from '../../utils/index'
+import http from '../../utils/http';
 export default {
   name: '',
   data () {
@@ -46,16 +48,42 @@ export default {
       }
     }
   },
+  mounted () {
+    http.get('/user/login')
+    .then(res=>{
+      if(res?.data?.code === 0){
+        this.successMsg('cookie有效，登录')
+        this.jumpPage(res?.data)
+      }
+    })
+  },
   methods: {
     onSubmit () {
-      this.$refs.form.validate((valid) => {
+      formValidate(this, 'form')
+      .then(valid=>{
         if (valid) {
-          alert('submit!');
-        } else {
-          console.log('error submit!!');
-          return false;
+          return http.post('/user/login',{...this?.form})
         }
       })
+      .then(res=>{
+        if(res?.code !==0){
+          this.errorMsg(res?.msg || '未知错误');
+          return
+        }
+        this.successMsg('登录成功！')
+        this.jumpPage(res?.data)
+        console.log(res?.data);
+      })
+    },
+    jumpPage(params){
+        const {token} = params
+        const {callbackurl} =getQueryObj();
+        console.log(callbackurl,'callbackurl',token,`${decodeURIComponent(callbackurl)}?token=${token}`)
+        if(callbackurl){
+            window.location.href=setQueryObj(decodeURIComponent(callbackurl),{params:{token}})
+        }else{
+            console.log('默认跳转逻辑')
+        }
     }
   }
 }
