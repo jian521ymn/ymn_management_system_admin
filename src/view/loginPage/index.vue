@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { formValidate,getQueryObj } from '../../utils/index'
+import { formValidate,getQueryObj, setQueryObj } from '../../utils/index'
 import http from '../../utils/http';
 export default {
   name: '',
@@ -78,9 +78,9 @@ export default {
     jumpPage(params){
         const {token} = params
         const {callbackurl} =getQueryObj();
-        console.log(callbackurl,'callbackurl',token,`${callbackurl}?token=${token}`)
+        console.log(callbackurl,'callbackurl',token,`${decodeURIComponent(callbackurl)}?token=${token}`)
         if(callbackurl){
-            window.location.href=`${callbackurl}?token=${token}`
+            window.location.href=setQueryObj(decodeURIComponent(callbackurl),{params:{token}})
         }else{
             console.log('默认跳转逻辑')
         }
