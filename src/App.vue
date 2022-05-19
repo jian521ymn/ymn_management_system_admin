@@ -1,20 +1,16 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <!-- <LoginPage></LoginPage> -->
-    <HelloWorld></HelloWorld>
+    <LoginPage></LoginPage>
   </div>
 </template>
 
 <script>
-// import LoginPage from './view/loginPage/index.vue'
-import HelloWorld from './components/HelloWorld.vue'
+import LoginPage from './view/loginPage/index.vue'
 
 export default {
   name: 'App',
   components: {
-    // LoginPage,
-    HelloWorld
+    LoginPage,
   }
 }
 </script>
