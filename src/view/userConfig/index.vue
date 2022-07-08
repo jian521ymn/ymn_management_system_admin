@@ -11,7 +11,7 @@
         </el-form-item>
         <el-form-item label="查询用户名称">
           <el-input
-            v-model="formData.userName"
+            v-model="formData.name"
             placeholder="输入用户名称"
             clearable
           ></el-input>
@@ -33,12 +33,11 @@
       </el-table>
       <el-pagination
         class="tr"
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page.sync="this.page.pageNum"
-        :page-size="this.page.pageSize"
+        :current-page="this.pageNum"
+        :page-size="this.pageSize"
         layout="total, prev, pager, next"
-        :total="this.page.total"
+        :total="this.total"
       >
       </el-pagination>
     </div>
@@ -53,29 +52,39 @@ export default {
     return {
       formData: {},
       tableData: [],
-      page: {
-        pageSize: 10,
-        pageNum: 1,
-        total: 0,
-      },
+      pageSize: 10,
+      pageNum: 1,
+      total: 0,
     };
   },
   created() {
     this.getList();
   },
+  watch:{
+      pageNum(){
+        this.getList();
+      }
+  },
   methods: {
     getList() {
-      http.get("user/list").then((res) => {
-        const { list, total, pageSize, pageNum } = res?.data || {};
+      const params = {
+        params:{
+          pageNum:this.pageNum,
+          pageSize:this.pageSize,
+          ...this.formData
+        }
+      }
+      http.get("user/list",params).then((res) => {
+        const { list, total } = res?.data || {};
         this.tableData = list || [];
-        this.page = { total, pageSize, pageNum };
+        this.total = total
       });
     },
     handleCurrentChange(pageNum){
-      console.log(pageNum);
+      this.pageNum = pageNum;
     },
-    onSubmit(value) {
-      console.log(value, this.formData);
+    onSubmit() {
+      this.getList();
     },
   },
 };
