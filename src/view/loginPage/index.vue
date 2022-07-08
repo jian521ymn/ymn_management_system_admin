@@ -2,24 +2,15 @@
   <div class="login-box">
     <div class="login-input-box">
       <h3>账号登陆</h3>
-      <el-form ref="form"
-               :model="form"
-               label-width="0px"
-               label-position="right"
-               :rules="rules">
-        <el-form-item label=""
-                      prop="userName">
-          <el-input v-model="form.userName"
-                    placeholder="请输入用户名"></el-input>
+      <el-form ref="form" :model="form" label-width="0px" label-position="right" :rules="rules">
+        <el-form-item label="" prop="userName">
+          <el-input v-model="form.userName" placeholder="请输入用户名"></el-input>
         </el-form-item>
-        <el-form-item label=""
-                      prop="password">
-          <el-input v-model="form.password"
-                    placeholder="请输入密码"></el-input>
+        <el-form-item label="" prop="password">
+          <el-input v-model="form.password" placeholder="请输入密码"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary"
-                     @click="onSubmit">登录</el-button>
+          <el-button type="primary" @click="onSubmit">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -28,11 +19,11 @@
 </template>
 
 <script>
-import { formValidate,getQueryObj, setQueryObj } from '../../utils/index'
-import http from '../../utils/http';
+import { formValidate, getQueryObj, setQueryObj } from 'utils/index'
+import http from 'utils/http';
 export default {
   name: '',
-  data () {
+  data() {
     return {
       form: {
         userName: '',
@@ -48,42 +39,42 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     http.get('/user/login')
-    .then(res=>{
-      if(res?.data?.code === 0){
-        this.successMsg('cookie有效，登录')
-        this.jumpPage(res?.data)
-      }
-    })
+      .then(res => {
+        if (res?.data?.code === 0) {
+          this.successMsg('cookie有效，登录')
+          this.jumpPage(res?.data)
+        }
+      })
   },
   methods: {
-    onSubmit () {
+    onSubmit() {
       formValidate(this, 'form')
-      .then(valid=>{
-        if (valid) {
-          return http.post('/user/login',{...this?.form})
-        }
-      })
-      .then(res=>{
-        if(res?.code !==0){
-          this.errorMsg(res?.msg || '未知错误');
-          return
-        }
-        this.successMsg('登录成功！')
-        this.jumpPage(res?.data)
-        console.log(res?.data);
-      })
+        .then(valid => {
+          if (valid) {
+            return http.post('/user/login', { ...this?.form })
+          }
+        })
+        .then(res => {
+          if (res?.code !== 0) {
+            this.errorMsg(res?.msg || '未知错误');
+            return
+          }
+          this.successMsg('登录成功！')
+          this.jumpPage(res?.data)
+          console.log(res?.data);
+        })
     },
-    jumpPage(params){
-        const {token} = params
-        const {callbackurl} =getQueryObj();
-        console.log(callbackurl,'callbackurl',token,`${decodeURIComponent(callbackurl)}?token=${token}`)
-        if(callbackurl){
-            window.location.href=setQueryObj(decodeURIComponent(callbackurl),{params:{token}})
-        }else{
-            console.log('默认跳转逻辑')
-        }
+    // 跳转逻辑，如果携带callbackurl，则进行指定URL跳转，反之进入默认权限配置系统
+    jumpPage(params) {
+      const { token } = params
+      const { callbackurl } = getQueryObj();
+      if (callbackurl) {
+        window.location.href = setQueryObj(decodeURIComponent(callbackurl), { params: { token } })
+      } else {
+        window.location.href = setQueryObj('/#/user')
+      }
     }
   }
 }
@@ -98,6 +89,7 @@ export default {
   background-size: cover;
   width: 100%;
   height: 100vh;
+
   .login-input-box {
     position: absolute;
     box-sizing: border-box;
@@ -107,11 +99,13 @@ export default {
     width: 400px;
     background: rgba(255, 255, 255, 0.5);
     padding: 30px;
+
     h3 {
       padding: 20px;
       margin-bottom: 20px;
       border-bottom: 1px solid rgb(153 153 153);
     }
+
     .el-button {
       width: 100%;
     }

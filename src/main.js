@@ -3,6 +3,7 @@ import ElementUI, { Message } from 'element-ui';
 import './assets/css/reset.css';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue'
+import router from './router'
 
 Vue.use(ElementUI);
 
@@ -26,5 +27,6 @@ Vue.prototype.successMsg=(text,config)=>{
 }
 
 new Vue({
+  router,
   render: h => h(App),
 }).$mount('#app')
