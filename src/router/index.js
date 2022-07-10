@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import LoginPage from '../view/loginPage'
 import Menu from '../components/NavMean'
 import UserConfig from '../view/userConfig'
+import UserRole from '../view/userRole'
  
 //1 注入插件
 Vue.use(VueRouter)
@@ -24,7 +25,7 @@ const routes =  [
           {
             name:'角色权限',
             path: 'user/power',
-            component: UserConfig,
+            component: UserRole,
           }
       ]
     },

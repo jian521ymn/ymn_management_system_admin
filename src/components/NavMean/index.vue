@@ -5,7 +5,7 @@
         <div style="height:60px; color: azure; padding: 10px;">
           管理后台
         </div>
-        <el-menu :default-active="hash" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="select"
+        <el-menu :default-active="hash" class="el-menu-vertical-demo"  @select="select"
           background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" >
           <el-submenu index="user" style="height:100%">
             <template slot="title">
