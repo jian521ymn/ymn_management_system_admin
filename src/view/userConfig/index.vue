@@ -25,7 +25,7 @@
       </el-form>
     </div>
     <div class="table">
-      <el-table :data="tableData" border style="width: 100%" size="small">
+      <el-table :data="tableData" border style="width: 100%">
         <el-table-column
           v-for="item in userConfigColumns"
           :key="item.uuid"
@@ -44,7 +44,7 @@
                 >删除</el-button
               >
             </span>
-            <span v-else>{{ scope.row[item.prop] }}</span>
+            <span v-else>{{ item.formatter ? item.formatter(scope.row) : scope.row[item.prop] }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -63,6 +63,7 @@
       :dialogFormVisible="dialogFormVisible"
       :cancel="cancelDialog"
       :confirm="confirmDialog"
+      :loadingConfirm="loadingConfirm"
     >
       <el-form
         :model="form"
@@ -147,7 +148,6 @@ const userConfigColumns = (roleList) => [
     label: "拥有角色",
     align: "center",
     formatter: (row) => {
-      console.log(roleList);
       return roleList
         .filter(({ id }) => row.roles.split().includes(`${id}`))
         .map(({ roleName }) => roleName)
@@ -172,6 +172,7 @@ export default {
       dialogTitle: "新增",
       dialogFormVisible: false,
       formLabelWidth: "120px",
+      loadingConfirm: false,
       form: {
         roles: [],
       },
@@ -243,6 +244,7 @@ export default {
       formValidate(this, "form")
         .then((valid) => {
           if (valid) {
+            this.loadingConfirm = true;
             const addOrEdit = this.dialogTitle === '编辑' ? '/user/update' : '/user/add'
             return http.post(addOrEdit, {
               ...this.form,
@@ -252,8 +254,11 @@ export default {
           return Promise.reject();
         })
         .then(() => {
+          this.loadingConfirm = false
           this.dialogFormVisible = false;
           this.getList();
+        }).catch(()=>{
+            this.loadingConfirm = false
         });
     },
     getUserRoleList() {

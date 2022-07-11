@@ -11,7 +11,7 @@
       <slot name="body"></slot>
       <div name="footer" class="dialog-footer">
         <el-button @click="cancel()">{{ cancelText }}</el-button>
-        <el-button type="primary" @click="confirm()">{{
+        <el-button :loading="loadingConfirm" type="primary" @click="confirm()">{{
           confirmText
         }}</el-button>
       </div>
@@ -55,6 +55,10 @@ export default {
       type: String,
       default: "确定",
     },
+    loadingConfirm:{
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
