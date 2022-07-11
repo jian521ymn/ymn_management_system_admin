@@ -7,16 +7,8 @@
         </div>
         <el-menu :default-active="hash" class="el-menu-vertical-demo"  @select="select"
           background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" >
-          <el-submenu index="user" style="height:100%">
-            <template slot="title">
-              <i class="el-icon-message"></i>
-              <span class="text">角色管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="user">角色配置</el-menu-item>
-              <el-menu-item index="user/power">角色权限</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
+              <el-menu-item index="user">用户配置</el-menu-item>
+              <el-menu-item index="user/power">角色配置</el-menu-item>
         </el-menu>
       </el-aside>
       <el-container direction="vertical" style="height: 100%;">

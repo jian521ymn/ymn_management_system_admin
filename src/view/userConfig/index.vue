@@ -78,7 +78,7 @@
           :label-width="formLabelWidth"
           prop="userName"
         >
-          <el-input v-model="form.userName" autocomplete="off"></el-input>
+          <el-input v-model="form.userName" autocomplete="off"  :disabled="getDisabled()"></el-input>
         </el-form-item>
         <el-form-item
           label="性别"
@@ -127,7 +127,7 @@
 <script>
 import http from "../../utils/http";
 import myDialog from "@/components/myDialog";
-import { formValidate } from "utils/index";
+import { formValidate, getCookie } from "utils/index";
 const userConfigColumns = (roleList) => [
   { prop: "id", label: "id", width: "120", align: "center" },
   { prop: "userName", label: "姓名", width: "120", align: "center" },
@@ -291,6 +291,9 @@ export default {
     cancelDialog() {
       this.dialogFormVisible = false;
     },
+    getDisabled(){
+      return getCookie().userNames === this.form.userName
+    }
   },
 };
 </script>

@@ -68,8 +68,9 @@ export default {
     },
     // 跳转逻辑，如果携带callbackurl，则进行指定URL跳转，反之进入默认权限配置系统
     jumpPage(params) {
-      const { token } = params
+      const { token,userNames } = params
       const { callbackurl } = getQueryObj();
+      document.cookie=`userNames=${userNames}`
       if (callbackurl) {
         window.location.href = setQueryObj(decodeURIComponent(callbackurl), { params: { token } })
       } else {

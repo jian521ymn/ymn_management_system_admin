@@ -48,6 +48,20 @@ export function getQueryObj(url_){
         return all+=`&${next}=${query[next]}`
     },baseUrl)
 }
+/**
+ * 获取cookie
+ * **/
+ export function getCookie() {
+    let cookie = document.cookie;
+    if(!cookie){
+        return {};
+    }
+    return cookie.replace(/\s+/g,'').split(';').reduce((prev,next)=>{
+        const [key, value] = next.split('=')
+        prev[key] = value
+        return prev
+    },{})
+}
 
 /**
  * 设置query的方法
