@@ -9,6 +9,7 @@
           background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" >
               <el-menu-item index="user">用户配置</el-menu-item>
               <el-menu-item index="user/power">角色配置</el-menu-item>
+              <el-menu-item index="user/power/api">接口配置</el-menu-item>
         </el-menu>
       </el-aside>
       <el-container direction="vertical" style="height: 100%;">

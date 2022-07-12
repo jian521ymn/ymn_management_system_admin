@@ -4,7 +4,8 @@ module.exports = {
 		port: 8080,
 		proxy: {
 			'/user': {
-				target: 'http://localhost:3334',
+				// target: 'http://localhost:3334',
+				target: 'http://114.215.183.5:3334',
 				ws: true,
 				changeOrigin: true,
 				// pathRewrite: {

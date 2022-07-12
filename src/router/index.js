@@ -4,6 +4,7 @@ import LoginPage from '../view/loginPage'
 import Menu from '../components/NavMean'
 import UserConfig from '../view/userConfig'
 import UserRole from '../view/userRole'
+import UserRoleApi from '../view/userRoleApi'
  
 //1 注入插件
 Vue.use(VueRouter)
@@ -26,6 +27,11 @@ const routes =  [
             name:'角色权限',
             path: 'user/power',
             component: UserRole,
+          },
+          {
+            name:'接口配置',
+            path: 'user/power/api',
+            component: UserRoleApi,
           }
       ]
     },
