@@ -52,9 +52,13 @@
         <el-form-item label="角色备注" :label-width="formLabelWidth">
           <el-input type="textarea" v-model="form.remark" autocomplete="off"></el-input>
         </el-form-item>
-        <!-- <el-form-item label="拥有权限" :label-width="formLabelWidth" prop="permissions">
-          <el-input v-model="form.permissions" autocomplete="off"></el-input>
-        </el-form-item> -->
+        <el-form-item label="拥有权限" :label-width="formLabelWidth" prop="permissions">
+         <el-checkbox-group v-model="form.permissions">
+            <el-checkbox v-for="api in permissionsList" :label="api.uuid" :key="api.uuid">
+              {{`${api.parentId}-${api.remark}` }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
       </el-form>
     </myDialog>
   </div>
@@ -73,7 +77,7 @@ const roleLevelList = [
   { label: "4", value: '四级' },
   { label: "5", value: '五级' },
 ]
-const userConfigColumns = (roleLevelList) => [
+const userConfigColumns = (permissionsList) => [
   { prop: "id", label: "id", width: "120", align: "center" },
   { prop: "roleName", label: "角色名称", width: "120", align: "center" },
   {
@@ -86,7 +90,9 @@ const userConfigColumns = (roleLevelList) => [
   },
   { prop: "operatingor", label: "操作人", align: "center", width: "120" },
   { prop: "remark", label: "备注", width: "220", align: "center" },
-  { prop: "permissions", label: "拥有权限", align: "center" },
+  { prop: "permissions", label: "拥有权限", align: "center",
+     formatter: (row) => permissionsList.filter(item=>(row.permissions.split(',').includes(`${item.uuid}`))).map(item =>`${item.parentId}-${item.remark}`).join()
+  },
   { prop: "oper", label: "操作", align: "center" },
 ];
 export default {
@@ -127,6 +133,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getPermissionsList()
   },
   watch: {
     pageNum() {
@@ -148,6 +155,19 @@ export default {
         this.total = total;
       });
     },
+    getPermissionsList(){
+      const params = {
+        params: {
+          pageSize: 100,
+          pageNum: 1,
+        },
+      };
+      http.get("user/role/api/list", params).then((res) => {
+        const { list } = res?.data || {};
+        this.permissionsList = list || [];
+        this.userConfigColumns = userConfigColumns(list || []);
+      });
+    },
     handleCurrentChange(pageNum) {
       this.pageNum = pageNum;
     },
@@ -158,11 +178,13 @@ export default {
       this.dialogTitle = "新增";
       this.form = { permissions: [], roleLevel: [] }
       this.dialogFormVisible = true;
+      this.getPermissionsList()
     },
     onEdit(uuid) {
       this.dialogTitle = "编辑";
       this.dialogFormVisible = true;
       this.getUserRoleInfo(uuid);
+       this.getPermissionsList()
     },
     onDel(uuid) {
       const params = {
@@ -185,6 +207,7 @@ export default {
         const data = res?.data || {};
         this.form = {
           ...data,
+          permissions:data.permissions.split(',')
         }
       });
     },
