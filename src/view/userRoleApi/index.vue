@@ -6,10 +6,14 @@
       </el-tabs>
       <div class="tr" style="margin-right:40px">
         <el-button type="primary" @click="onAdd">新增</el-button>
+        <el-button type="primary" @click="batchEnable(true)" :disabled="!multipleSelection.length">批量启用</el-button>
+        <el-button type="primary" @click="batchEnable(false)" :disabled="!multipleSelection.length">批量关闭</el-button>
       </div>
     </div>
     <div class="table" style="margin-left:20px;margin-top:50px">
-      <el-table :data="tableData" :border="true" style="width: 100%">
+      <el-table :data="tableData" :border="true" style="width: 100%" @selection-change="handleSelectionChange" :row-key="rowKey">
+        <el-table-column type="selection" width="55">
+        </el-table-column>
         <el-table-column v-for="item in userConfigColumns" :key="item.uuid" :prop="item.prop" :label="item.label"
           :width="item.width || 0" :align="item.align || 'left'" :formatter="item.formatter">
           <template slot-scope="scope">
@@ -37,7 +41,7 @@
           <el-input type="textarea" v-model="form.remark" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="是否启用" :label-width="formLabelWidth">
-          <el-switch style="display: block;margin-top:10px" v-model="form.isEnable"  active-text="接口开启时可进行鉴权，未启用时不生效" />
+          <el-switch style="display: block;margin-top:10px" v-model="form.isEnable" active-text="接口开启时可进行鉴权，未启用时不生效" />
         </el-form-item>
       </el-form>
     </myDialog>
@@ -95,26 +99,12 @@ export default {
         roleName: [
           { required: true, message: "请输入角色名", trigger: "blur" },
         ],
-        roleLevel: [
-          {
-            required: true,
-            message: "请选择角色级别",
-            trigger: "blur",
-            validator: (rule, value, callback) => {
-              console.log(value, "values");
-              if (!value) {
-                callback(new Error("请选择角色级别"));
-              } else {
-                callback();
-              }
-            },
-          },
-        ],
         permissions: [
           { required: true, message: "请选择权限", trigger: "blur" },
         ],
       },
       tabData: [],
+      multipleSelection:[],
       systemKey: 'build_platform'
     };
   },
@@ -160,7 +150,7 @@ export default {
     },
     onAdd() {
       this.dialogTitle = "新增";
-      this.form = {isEnable: false};
+      this.form = { isEnable: false };
       this.dialogFormVisible = true;
     },
     onEdit(uuid) {
@@ -203,8 +193,8 @@ export default {
                 : "/user/role/api/add";
             return http.post(addOrEdit, {
               ...this.form,
-              parentId:this.systemKey,
-              isEnable:this.isEnable ? '1' : '0',
+              parentId: this.systemKey,
+              isEnable: this.form.isEnable ? '1' : '0',
             });
           }
           return Promise.reject();
@@ -217,6 +207,18 @@ export default {
     cancelDialog() {
       this.dialogFormVisible = false;
     },
+    handleSelectionChange(val){
+      this.multipleSelection = val;
+    },
+    rowKey(row){
+      return row.uuid
+    },
+    batchEnable(val) {
+       http.post('/user/role/api/batch_edit', {
+              parentIds: this.multipleSelection.map(item=>item.uuid).join(),
+              isEnable: val ? '1' : '0',
+            })
+    }
   },
 };
 </script>
