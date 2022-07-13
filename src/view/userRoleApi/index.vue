@@ -2,96 +2,43 @@
   <div>
     <div class="search tl">
       <el-tabs v-model="systemKey" @tab-click="handleClick">
-        <el-tab-pane 
-          v-for="item in tabData" 
-          :key="item.value"
-          :label="item.value"
-          :name="item.label"
-        />
+        <el-tab-pane v-for="item in tabData" :key="item.value" :label="item.value" :name="item.label" />
       </el-tabs>
+      <div class="tr" style="margin-right:40px">
+        <el-button type="primary" @click="onAdd">新增</el-button>
+      </div>
     </div>
-    <div class="table"  style="margin-left:20px;margin-top:50px">
+    <div class="table" style="margin-left:20px;margin-top:50px">
       <el-table :data="tableData" :border="true" style="width: 100%">
-        <el-table-column
-          v-for="item in userConfigColumns"
-          :key="item.uuid"
-          :prop="item.prop"
-          :label="item.label"
-          :width="item.width || 0"
-          :align="item.align || 'left'"
-          :formatter="item.formatter"
-        >
+        <el-table-column v-for="item in userConfigColumns" :key="item.uuid" :prop="item.prop" :label="item.label"
+          :width="item.width || 0" :align="item.align || 'left'" :formatter="item.formatter">
           <template slot-scope="scope">
             <span v-if="item.prop === 'oper'">
-              <el-button type="primary" @click="onEdit(scope.row.uuid)"
-                >编辑</el-button
-              >
-              <el-button type="danger" @click="onDel(scope.row.uuid)"
-                >删除</el-button
-              >
+              <el-button type="primary" @click="onEdit(scope.row.uuid)">编辑</el-button>
+              <el-button type="danger" @click="onDel(scope.row.uuid)">删除</el-button>
             </span>
             <span v-else>{{
-              item.formatter ? item.formatter(scope.row) : scope.row[item.prop]
+                item.formatter ? item.formatter(scope.row) : scope.row[item.prop]
             }}</span>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        class="tr"
-        @current-change="handleCurrentChange"
-        :current-page="this.pageNum"
-        :page-size="this.pageSize"
-        layout="total, prev, pager, next"
-        :total="this.total"
-      >
+      <el-pagination class="tr" @current-change="handleCurrentChange" :current-page="this.pageNum"
+        :page-size="this.pageSize" layout="total, prev, pager, next" :total="this.total">
       </el-pagination>
     </div>
-    <myDialog
-      :title="dialogTitle"
-      :dialogFormVisible="dialogFormVisible"
-      :cancel="cancelDialog"
-      :confirm="confirmDialog"
-    >
-      <el-form
-        :model="form"
-        slot="body"
-        style="padding: 20px"
-        :rules="rules"
-        class="tl"
-        ref="form"
-      >
-        <el-form-item
-          label="角色名称"
-          :label-width="formLabelWidth"
-          prop="roleName"
-        >
-          <el-input v-model="form.roleName" autocomplete="off"></el-input>
+    <myDialog :title="dialogTitle" :dialogFormVisible="dialogFormVisible" :cancel="cancelDialog"
+      :confirm="confirmDialog">
+      <el-form :model="form" slot="body" style="padding: 20px" :rules="rules" class="tl" ref="form">
+        <el-form-item label="接口路径" :label-width="formLabelWidth" prop="path">
+          <el-input v-model="form.path" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item
-          label="角色级别"
-          :label-width="formLabelWidth"
-          prop="roleLevel"
-        >
-          <el-radio-group v-model="form.roleLevel">
-            <el-radio
-              v-for="role in roleLevelList"
-              :label="role.label"
-              :key="role.label"
-            >
-              {{ role.value }}
-            </el-radio>
-          </el-radio-group>
+        <el-form-item label="接口备注" :label-width="formLabelWidth">
+          <el-input type="textarea" v-model="form.remark" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="角色备注" :label-width="formLabelWidth">
-          <el-input
-            type="textarea"
-            v-model="form.remark"
-            autocomplete="off"
-          ></el-input>
+        <el-form-item label="是否启用" :label-width="formLabelWidth">
+          <el-switch style="display: block;margin-top:10px" v-model="form.isEnable"  active-text="接口开启时可进行鉴权，未启用时不生效" />
         </el-form-item>
-        <!-- <el-form-item label="拥有权限" :label-width="formLabelWidth" prop="permissions">
-          <el-input v-model="form.permissions" autocomplete="off"></el-input>
-        </el-form-item> -->
       </el-form>
     </myDialog>
   </div>
@@ -123,7 +70,7 @@ const userConfigColumns = () => [
   },
   { prop: "operatingor", label: "操作人", align: "center", width: "120" },
   { prop: "remark", label: "备注", width: "220", align: "center" },
-  { prop: "isEnable", label: "是否启用", width: "120", align: "center",formatter:(row)=>row.isEnable === '1' ? "是" : '否' },
+  { prop: "isEnable", label: "是否启用", width: "120", align: "center", formatter: (row) => row.isEnable === '1' ? "是" : '否' },
   { prop: "oper", label: "操作", align: "center" },
 ];
 export default {
@@ -142,7 +89,7 @@ export default {
       dialogTitle: "新增",
       dialogFormVisible: false,
       formLabelWidth: "100px",
-      form: { roleLevel: [] },
+      form: { isEnable: false },
       roleLevelList,
       rules: {
         roleName: [
@@ -167,8 +114,8 @@ export default {
           { required: true, message: "请选择权限", trigger: "blur" },
         ],
       },
-      tabData:[],
-      systemKey:'build_platform'
+      tabData: [],
+      systemKey: 'build_platform'
     };
   },
   created() {
@@ -176,23 +123,23 @@ export default {
     this.getSystemList()
   },
   watch: {
-    pageNum() {
-      this.getList();
+    systemKey() {
+      this.pageNum = 1
+      this.getList({ pageNum: 1 });
     },
   },
   methods: {
-     handleClick(tab, event) {
-        console.log(tab, event);
-      },
-    getList() {
-      const params = {
-        params: {
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          systemKey:this.systemKey,
-        },
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+    getList(query) {
+      let params = {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        systemKey: this.systemKey,
       };
-      http.get("user/role/api/list", params).then((res) => {
+      params = Object.assign({}, params, query || {})
+      http.get("user/role/api/list", { params }).then((res) => {
         const { list, total } = res?.data || {};
         this.tableData = list || [];
         this.total = total;
@@ -201,18 +148,19 @@ export default {
     getSystemList() {
       http.get("user/role/api/system_list").then((res) => {
         const data = res?.data || {};
-       this.tabData = data
+        this.tabData = data
       });
     },
     handleCurrentChange(pageNum) {
       this.pageNum = pageNum;
+      this.getList();
     },
     onSubmit() {
       this.getList();
     },
     onAdd() {
       this.dialogTitle = "新增";
-      this.form = { permissions: [], roleLevel: [] };
+      this.form = {isEnable: false};
       this.dialogFormVisible = true;
     },
     onEdit(uuid) {
@@ -226,7 +174,7 @@ export default {
           uuid,
         },
       };
-      http.get("user/role/delete", params).then(() => {
+      http.get("user/role/api/delete", params).then(() => {
         this.successMsg("删除成功！");
         this.getList();
       });
@@ -237,10 +185,11 @@ export default {
           uuid,
         },
       };
-      http.get("user/role/info", params).then((res) => {
+      http.get("user/role/api/info", params).then((res) => {
         const data = res?.data || {};
         this.form = {
           ...data,
+          isEnable: data.isEnable === '1'
         };
       });
     },
@@ -250,11 +199,12 @@ export default {
           if (valid) {
             const addOrEdit =
               this.dialogTitle === "编辑"
-                ? "/user/role/update"
-                : "/user/role/add";
+                ? "/user/role/api/update"
+                : "/user/role/api/add";
             return http.post(addOrEdit, {
               ...this.form,
-              permissions: (this.form.permissions || []).join(),
+              parentId:this.systemKey,
+              isEnable:this.isEnable ? '1' : '0',
             });
           }
           return Promise.reject();
