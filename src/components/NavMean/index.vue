@@ -12,7 +12,7 @@
               <el-menu-item index="user/power/api">接口配置</el-menu-item>
         </el-menu>
       </el-aside>
-      <el-container direction="vertical" style="height: 100%;">
+      <el-container direction="vertical" style="height: 100%; margin-left: 200px;">
         <div style="padding: 30px 40px 0;">
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/user' }">首页</el-breadcrumb-item>
@@ -77,9 +77,12 @@ export default {
 .aside-box {
   background-image: linear-gradient(#28303b, #838fa1);
   // background: #409eff;
-  height: 100%;
+  height: 100vh;
   box-sizing: border-box;
   border-right: 1px solid #d1d1d1;
+  position:fixed;
+  top: 0;
+  left: 0;
 
   .el-menu {
     background: transparent;
