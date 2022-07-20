@@ -13,13 +13,13 @@
         <el-button type="primary" @click="onAdd">新增</el-button>
         <el-button
           type="primary"
-          @click="batchEnable(true)"
+          @click="batchEnable({isEnable:'1'})"
           :disabled="!multipleSelection.length"
           >批量启用</el-button
         >
         <el-button
           type="primary"
-          @click="batchEnable(false)"
+          @click="batchEnable({isEnable:'0'})"
           :disabled="!multipleSelection.length"
           >批量关闭</el-button
         >
@@ -50,6 +50,9 @@
               >
               <el-button type="danger" @click="onDel(scope.row.uuid)"
                 >删除</el-button
+              >
+              <el-button type="success" @click="batchEnable({isEnable: scope.row.isEnable === '1' ? '0' : '1',ids:[scope.row.id]})"
+                >{{scope.row.isEnable === '0' ? '启用' : '禁用'}}</el-button
               >
             </span>
             <span v-else>{{
@@ -279,10 +282,10 @@ export default {
     rowKey(row) {
       return row.uuid;
     },
-    batchEnable(val) {
+    batchEnable(params) {
       http.post("/user/role/api/batch_edit", {
         ids: this.multipleSelection.map((item) => item.id),
-        isEnable: val ? "1" : "0",
+        ...params,
       })
       .then(res=>{
         if(res.code !== 0) {
