@@ -25,10 +25,20 @@ Vue.prototype.successMsg=(text,config)=>{
     ...config
   })
 }
-window.addEventListener('error', function (e) {
-  console.log(e,'e');
-})
 new Vue({
   router,
   render: h => h(App),
 }).$mount('#app')
+//Vue全局异常捕获，落日志
+const errorHandler = (err, vm, info)=>{
+  console.warn('Vue全局异常捕获开始===========')
+  console.log(`Error: ${err.toString()}\nInfo: ${info}`)
+  if (err.isAxiosError) {
+      console.log('axios请求错误！！')
+      }
+  console.warn('Vue全局异常捕获结束===========')
+  
+}
+
+Vue.config.errorHandler = errorHandler;
+Vue.prototype.$throw = (error)=> errorHandler(error,this);
