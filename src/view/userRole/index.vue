@@ -175,6 +175,8 @@ export default {
       this.getList();
     },
     onAdd() {
+      // eslint-disable-next-line no-undef
+      console.log(a);
       this.dialogTitle = "新增";
       this.form = { permissions: [], roleLevel: [] }
       this.dialogFormVisible = true;

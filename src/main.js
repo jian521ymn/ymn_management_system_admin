@@ -25,7 +25,9 @@ Vue.prototype.successMsg=(text,config)=>{
     ...config
   })
 }
-
+window.addEventListener('error', function (e) {
+  console.log(e,'e');
+})
 new Vue({
   router,
   render: h => h(App),
