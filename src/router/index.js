@@ -5,6 +5,7 @@ import Menu from '../components/NavMean'
 import UserConfig from '../view/userConfig'
 import UserRole from '../view/userRole'
 import UserRoleApi from '../view/userRoleApi'
+import nodeDown from '../view/nodeDown'
  
 //1 注入插件
 Vue.use(VueRouter)
@@ -46,6 +47,10 @@ const routes =  [
     {
       path: '/about',
       component: LoginPage
+    },
+    {
+      path: '/node',
+      component: nodeDown
     }
   ]
  
