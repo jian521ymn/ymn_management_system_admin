@@ -27,6 +27,7 @@
                 <span v-else>
                     暂未获取，请点击下载
                 </span>
+                <br>
                 {{this.url}}
             </span>
         </div>
