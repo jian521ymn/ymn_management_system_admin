@@ -1,5 +1,5 @@
 <template>
-    <div class="bg" v-loading="loading" element-loading-text="服务器资源下载中，下载完成后将自动下载">
+    <div class="bg" v-loading="loading" :element-loading-text="text">
         <div class="login-box1">
             <h2>node镜像下载JY</h2>
             <div>
@@ -20,7 +20,7 @@
         </div>
         <div class="remark">
             <span>
-                当前版本信息：{{this.version && this.type ? `${this.version}${this.type}`:''}}
+                当前版本信息：{{this.version && this.type ? `${this.version}${this.type} 大小：${this.getVersion()}`:''}}
                 <br>
                 资源下载url：
                 <el-link v-if="this.url" type="success" :href="this.url">手动下载</el-link>
@@ -36,6 +36,7 @@
   
 <script>
 import axios from 'axios';
+import { nodeVersionSize } from 'utils/nodeVersionSize'
 import { nodeVersion, nodeType } from 'utils/index'
 // import http from 'utils/http';
 export default {
@@ -47,7 +48,10 @@ export default {
             version: '',
             type: '',
             loading: false,
-            url: ''
+            url: '',
+            nowSize: 0,
+            nodeVersionSize,
+            text: ''
         }
     },
     mounted() {
@@ -62,6 +66,37 @@ export default {
     methods: {
         change() {
             this.url = ''
+        },
+        getVersion() {
+            let ver = this.nodeVersionSize[this.version];
+            let versionSize = 0
+            Object.keys(ver).forEach(item => {
+                if (item.includes(this.type)) {
+                    versionSize = ver[item]
+                }
+            })
+            return (Number(versionSize) / 1000 / 1000).toFixed(2) + 'M'
+        },
+        getText() {
+            this.text = `服务器资源下载中，${this.nowSize}/${this.nodeVersionSize}`
+        },
+        getFileSize() {
+            setTimeout(() => {
+                axios.get(`http://114.215.183.5:3334/user/getfileProgress?version=${this.version}&type=${this.type}`).then(re => {
+                    let res = re.data;
+                    if (res.code === 0 && res.data) {
+                        this.nowSize = res.data;
+                        this.getText(res.data);
+                        if(Number(res.data)<Number(this.nodeVersionSize)){
+                            this.getFileSize()
+                        }else{
+                            this.nowSize=0
+                        }
+                    }
+                }).catch(() => {
+                    this.$message.error('请求异常');
+                })
+            }, 100);
         },
         down() {
             this.loading = true;
