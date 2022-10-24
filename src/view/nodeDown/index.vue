@@ -100,7 +100,7 @@ export default {
         },
         down() {
             this.loading = true;
-            this.getText(0)
+            this.getFileSize()
             axios.get(`http://114.215.183.5:3334/user/DownloadFile?version=${this.version}&type=${this.type}`).then(re => {
                 this.loading = false
                 let res = re.data;
