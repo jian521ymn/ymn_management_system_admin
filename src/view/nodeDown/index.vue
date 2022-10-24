@@ -20,7 +20,7 @@
         </div>
         <div class="remark">
             <span>
-                当前版本信息：{{this.version && this.type ? `${this.version}${this.type} 大小：${this.getVersion()}`:''}}
+                当前版本信息：{{this.version && this.type ? `${this.version}${this.type} 大小：${(Number(this.getVersion()) / 1024 / 1024).toFixed(2) + 'M'}`:''}}
                 <br>
                 资源下载url：
                 <el-link v-if="this.url" type="success" :href="this.url">手动下载</el-link>
@@ -75,7 +75,7 @@ export default {
                     versionSize = ver[item]
                 }
             })
-            return (Number(versionSize) / 1000 / 1000).toFixed(2) + 'M'
+            return versionSize
         },
         getText() {
             this.text = `服务器资源下载中，${this.nowSize}/${this.nodeVersionSize}`
@@ -87,7 +87,7 @@ export default {
                     if (res.code === 0 && res.data) {
                         this.nowSize = res.data;
                         this.getText(res.data);
-                        if(Number(res.data)<Number(this.nodeVersionSize)){
+                        if(Number(res.data)<Number(this.getVersion())){
                             this.getFileSize()
                         }else{
                             this.nowSize=0
