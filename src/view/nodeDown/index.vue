@@ -1,5 +1,5 @@
 <template>
-    <div class="bg" v-loading="loading" :element-loading-text="text">
+    <div class="bg">
         <div class="login-box1">
             <h2>node镜像下载JY</h2>
             <div>
@@ -20,7 +20,8 @@
         </div>
         <div class="remark">
             <span>
-                当前版本信息：{{this.version && this.type ? `${this.version}${this.type} 大小：${(Number(this.getVersion()) / 1024 / 1024).toFixed(2) + 'M'}`:''}}
+                当前版本信息：{{this.version && this.type ? `${this.version}${this.type} 大小：${(Number(this.getVersion()) / 1024
+                / 1024).toFixed(2) + 'M'}`:''}}
                 <br>
                 资源下载url：
                 <el-link v-if="this.url" type="success" :href="this.url">手动下载</el-link>
@@ -31,13 +32,20 @@
                 {{this.url}}
             </span>
         </div>
+        <el-dialog title="下载" :visible.sync="dialogVisible" width="30%"  :show-close="false">
+                服务器资源下载中...{{this.nowSize}}/{{dialogVisible && this.getVersion()}}
+                <br>
+                服务器资源下载完成后将会触发，自动下载服务器资源...
+                <el-progress :text-inside="true" :stroke-width="24" :percentage="(Number(nowSize)* 100/Number(dialogVisible ? getVersion(): 0)).toFixed(2) || 0" status="success"></el-progress>
+        </el-dialog>
     </div>
 </template>
   
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 import { nodeVersionSize } from 'utils/nodeVersionSize'
 import { nodeVersion, nodeType } from 'utils/index'
+import http from '../../utils/http';
 // import http from 'utils/http';
 export default {
     name: '',
@@ -51,7 +59,7 @@ export default {
             url: '',
             nowSize: 0,
             nodeVersionSize,
-            text: ''
+            dialogVisible:false
         }
     },
     mounted() {
@@ -68,7 +76,7 @@ export default {
             this.url = ''
         },
         getVersion() {
-            let ver = this.nodeVersionSize[this.version];
+            let ver = this.nodeVersionSize[this.version] || {};
             let versionSize = 0
             Object.keys(ver).forEach(item => {
                 if (item.includes(this.type)) {
@@ -77,39 +85,35 @@ export default {
             })
             return versionSize
         },
-        getText() {
-            this.text = `服务器资源下载中，${this.nowSize}/${this.nodeVersionSize}`
-        },
+
         getFileSize() {
             setTimeout(() => {
-                axios.get(`http://114.215.183.5:3334/user/getfileProgress?version=${this.version}&type=${this.type}`).then(re => {
-                    let res = re.data;
-                    if (res.code === 0 && res.data) {
+                http.get(`user/getfileProgress?version=${this.version}&type=${this.type}`).then(res => {
+
+                    if (res.code === 0 && (res.data || res.data === 0)) {
                         this.nowSize = res.data;
-                        this.getText(res.data);
-                        if(Number(res.data)<Number(this.getVersion())){
+                        if (Number(res.data) < Number(this.getVersion())) {
                             this.getFileSize()
-                        }else{
-                            this.nowSize=0
+                        } else {
+                            this.nowSize = 0
                         }
                     }
-                }).catch(() => {
-                    this.$message.error('请求异常');
+                }).catch((err) => {
+                    this.$message.error('请求异常' + err);
                 })
-            }, 100);
+            }, 50);
         },
         down() {
-            this.loading = true;
+            this.dialogVisible = true;
             this.getFileSize()
-            axios.get(`http://114.215.183.5:3334/user/DownloadFile?version=${this.version}&type=${this.type}`).then(re => {
-                this.loading = false
-                let res = re.data;
+            http.get(`user/DownloadFile?version=${this.version}&type=${this.type}`).then(res => {
+                this.dialogVisible = false
                 if (res.code === 0 && res.data) {
                     this.url = res.data
                     window.location.href = res.data
                 }
             }).catch(() => {
-                this.loading = false;
+                this.dialogVisible = false;
                 this.$message.error('请求异常');
             })
         }
@@ -147,5 +151,8 @@ export default {
         border-radius: 10px;
         background: white;
     }
+}
+.dialog-footer{
+    text-align: center;
 }
 </style>
