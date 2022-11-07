@@ -32,9 +32,13 @@
                 <br>
                 {{ this.url }}
             </span>
-            <h2>累计下载人数：{{ this.people }}人，累计下载次数： <span class="number">{{ this.total }}</span> 次</h2>
+            <h3>
+                累计下载人数：<i class="numberpeo"><NumberGrow :value="people" /></i>人
+                <br>
+                累计下载次数： <i class="number"><NumberGrow :value="total" /></i> 次
+            </h3>
         </div>
-        <el-dialog title="下载" :visible.sync="dialogVisible" width="30%" :show-close="false">
+        <el-dialog title="下载" :visible.sync="dialogVisible" width="30%" :show-close="false" custom-class="downDialog">
             服务器资源下载中...{{ this.nowSize }}/{{ dialogVisible && this.getVersion() }}
             <br>
             服务器资源下载完成后将会触发，自动下载服务器资源...
@@ -50,9 +54,13 @@
 import { nodeVersionSize } from 'utils/nodeVersionSize'
 import { nodeVersion, nodeType } from 'utils/index'
 import http from '../../utils/http';
+import NumberGrow from '../../components/NumberGrow'
 // import http from 'utils/http';
 export default {
     name: '',
+    components: {
+		NumberGrow
+	},
     data() {
         return {
             nodeVersion,
@@ -129,9 +137,9 @@ export default {
             http.get(`user/InfoUploadList`).then(res => {
                 if (res.code === 0 && res.data) {
                     const { total, people } = res?.data || {};
-                    // this.total = total;
+                    this.total = total;
                     this.people = people;
-                    this.numJump(total, 'total')
+                    // this.numJump(total, 'total')
                 }
             }).catch(() => {
                 this.$message.error('请求异常');
@@ -161,7 +169,7 @@ export default {
 }
 </script>
   
-<style lang='less' scoped>
+<style lang='less'>
 .bg {
     background-image: url(http://114.215.183.5:88/cc/node.jpeg);
     width: 100vw;
@@ -199,5 +207,14 @@ export default {
 .number{
     font-size: 40px;
     color: #9900ff;
+    font-weight: 700;
+}
+.numberpeo{
+    font-size: 32px;
+    color: #ff00a6;
+    font-weight: 700;
+}
+.downDialog{
+    min-width: 300px;
 }
 </style>
