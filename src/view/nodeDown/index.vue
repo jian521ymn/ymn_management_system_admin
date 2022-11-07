@@ -20,8 +20,9 @@
         </div>
         <div class="remark">
             <span>
-                当前版本信息：{{this.version && this.type ? `${this.version}${this.type} 大小：${(Number(this.getVersion()) / 1024
-                / 1024).toFixed(2) + 'M'}`:''}}
+                当前版本信息：{{ this.version && this.type ? `${this.version}${this.type} 大小：${(Number(this.getVersion()) / 1024
+                        / 1024).toFixed(2) + 'M'}` : ''
+                }}
                 <br>
                 资源下载url：
                 <el-link v-if="this.url" type="success" :href="this.url">手动下载</el-link>
@@ -29,14 +30,17 @@
                     暂未获取，请点击下载
                 </span>
                 <br>
-                {{this.url}}
+                {{ this.url }}
             </span>
+            <h2>累计下载人数：{{ this.people }}人，累计下载次数： <span class="number">{{ this.total }}</span> 次</h2>
         </div>
-        <el-dialog title="下载" :visible.sync="dialogVisible" width="30%"  :show-close="false">
-                服务器资源下载中...{{this.nowSize}}/{{dialogVisible && this.getVersion()}}
-                <br>
-                服务器资源下载完成后将会触发，自动下载服务器资源...
-                <el-progress :text-inside="true" :stroke-width="24" :percentage="(Number(nowSize)* 100/Number(dialogVisible ? getVersion(): 0)).toFixed(2) || 0" status="success"></el-progress>
+        <el-dialog title="下载" :visible.sync="dialogVisible" width="30%" :show-close="false">
+            服务器资源下载中...{{ this.nowSize }}/{{ dialogVisible && this.getVersion() }}
+            <br>
+            服务器资源下载完成后将会触发，自动下载服务器资源...
+            <el-progress :text-inside="true" :stroke-width="24"
+                :percentage="(Number(nowSize) * 100 / Number(dialogVisible ? getVersion() : 0)).toFixed(2) || 0"
+                status="success"></el-progress>
         </el-dialog>
     </div>
 </template>
@@ -59,7 +63,9 @@ export default {
             url: '',
             nowSize: 0,
             nodeVersionSize,
-            dialogVisible:false
+            dialogVisible: false,
+            people: 0,
+            total: 0,
         }
     },
     mounted() {
@@ -70,6 +76,7 @@ export default {
         //         this.jumpPage(res?.data)
         //       }
         //     })
+        this.getDownTotal()
     },
     methods: {
         change() {
@@ -110,12 +117,45 @@ export default {
                 this.dialogVisible = false
                 if (res.code === 0 && res.data) {
                     this.url = res.data
-                    window.location.href = res.data
+                    window.location.href = res.data;
+                    this.getDownTotal()
                 }
             }).catch(() => {
                 this.dialogVisible = false;
                 this.$message.error('请求异常');
             })
+        },
+        getDownTotal() {
+            http.get(`user/InfoUploadList`).then(res => {
+                if (res.code === 0 && res.data) {
+                    const { total, people } = res?.data || {};
+                    // this.total = total;
+                    this.people = people;
+                    this.numJump(total, 'total')
+                }
+            }).catch(() => {
+                this.$message.error('请求异常');
+            })
+        },
+        numJump(num, key) {
+            if (num > 100) {
+                let time = num/100;
+                let i = 1;
+                let timer;
+                timer = ()=>setTimeout(() => {
+                    console.log(2222,num);
+                    if (i >10) {
+                        this[key] = num;
+                        return
+                    }
+                    console.log(i * time,'222');
+                    this[key] = Math.floor(i * time);
+                    i++;
+                    timer()
+                }, 60)
+                timer()
+                return
+            }
         }
     }
 }
@@ -152,7 +192,12 @@ export default {
         background: white;
     }
 }
-.dialog-footer{
+
+.dialog-footer {
     text-align: center;
+}
+.number{
+    font-size: 40px;
+    color: #9900ff;
 }
 </style>
