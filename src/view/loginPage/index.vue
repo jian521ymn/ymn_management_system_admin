@@ -72,7 +72,7 @@ export default {
       const { callbackurl } = getQueryObj();
       document.cookie=`userNames=${userNames}`
       if (callbackurl) {
-        window.location.href = setQueryObj(49(callbackurl), { params: { token,userNames,imageUrl } })
+        window.location.href = setQueryObj((callbackurl), { params: { token,userNames,imageUrl } })
       } else {
         window.location.href = setQueryObj('/#/user')
       }
