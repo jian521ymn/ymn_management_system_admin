@@ -33,9 +33,9 @@
                 {{ this.url }}
             </span>
             <h3>
-                累计下载人数：<i class="numberpeo"><NumberGrow :value="people" /></i>人
+                累计下载人数：<i class="numberpeo"><NumberGrow :value="people" /></i>人,今日<i class="numberpeo"><NumberGrow :value="resPeople" /></i>人
                 <br>
-                累计下载次数： <i class="number"><NumberGrow :value="total" /></i> 次
+                累计下载次数： <i class="number"><NumberGrow :value="total" /></i> 次,今日<i class="numberpeo"><NumberGrow :value="resTotal" /></i>次
             </h3>
         </div>
         <el-dialog title="下载" :visible.sync="dialogVisible" width="30%" :show-close="false" custom-class="downDialog">
@@ -74,6 +74,8 @@ export default {
             dialogVisible: false,
             people: 0,
             total: 0,
+            resTotal:0,
+            resPeople:0
         }
     },
     mounted() {
@@ -136,9 +138,11 @@ export default {
         getDownTotal() {
             http.get(`user/InfoUploadList`).then(res => {
                 if (res.code === 0 && res.data) {
-                    const { total, people } = res?.data || {};
+                    const { total, people,resPeople,resTotal } = res?.data || {};
                     this.total = total;
                     this.people = people;
+                    this.resPeople = resPeople;
+                    this.resTotal = resTotal;
                     // this.numJump(total, 'total')
                 }
             }).catch(() => {
