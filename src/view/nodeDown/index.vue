@@ -15,12 +15,16 @@
                 </el-select>
             </div>
             <div>
-                <el-button :disabled="!version || !type" type="primary" @click="down">下载</el-button>
+                <el-button :disabled="!version || !type" type="primary" @click="down(null)">下载</el-button>
+                <el-tooltip class="item" effect="dark" content="文件大小异常时，可使用强制下载，重新从服务器获取资源" placement="top">
+                    <el-button :disabled="!version || !type" type="danger" @click="down('force')">强制下载</el-button>
+                </el-tooltip>
             </div>
         </div>
         <div class="remark">
             <span>
-                当前版本信息：{{ this.version && this.type ? `${this.version}${this.type} 大小：${(Number(this.getVersion()) / 1024
+                当前版本信息：{{ this.version && this.type ? `${this.version}${this.type} 大小：${(Number(this.getVersion()) /
+                        1024
                         / 1024).toFixed(2) + 'M'}` : ''
                 }}
                 <br>
@@ -33,9 +37,21 @@
                 {{ this.url }}
             </span>
             <h3>
-                累计下载人数：<i class="numberpeo"><NumberGrow :value="people" /></i>人,今日<i class="numberpeo"><NumberGrow :value="resPeople" /></i>人
+                累计下载人数：<i class="numberpeo">
+                    <NumberGrow :value="people" />
+                </i>人,今日<i class="numberpeo">
+                    <NumberGrow :value="resPeople" />
+                </i>人
                 <br>
-                累计下载次数： <i class="number"><NumberGrow :value="total" /></i> 次,今日<i class="numberpeo"><NumberGrow :value="resTotal" /></i>次
+                累计下载次数： <i class="number">
+                    <NumberGrow :value="total" />
+                </i> 次,今日<i class="numberpeo">
+                    <NumberGrow :value="resTotal" />
+                </i>次
+            </h3>
+            <h3>意见反馈：
+                <el-input style="width:500px"  placeholder="请输入内容" v-model="textarea" />
+                <el-button  @click="submit" type="primary">提交</el-button>
             </h3>
         </div>
         <el-dialog title="下载" :visible.sync="dialogVisible" width="30%" :show-close="false" custom-class="downDialog">
@@ -59,8 +75,8 @@ import NumberGrow from '../../components/NumberGrow'
 export default {
     name: '',
     components: {
-		NumberGrow
-	},
+        NumberGrow
+    },
     data() {
         return {
             nodeVersion,
@@ -74,8 +90,9 @@ export default {
             dialogVisible: false,
             people: 0,
             total: 0,
-            resTotal:0,
-            resPeople:0
+            resTotal: 0,
+            resPeople: 0,
+            textarea:''
         }
     },
     mounted() {
@@ -120,10 +137,10 @@ export default {
                 })
             }, 50);
         },
-        down() {
+        down(force) {
             this.dialogVisible = true;
             this.getFileSize()
-            http.get(`user/DownloadFile?version=${this.version}&type=${this.type}`).then(res => {
+            http.get(`user/DownloadFile?version=${this.version}&type=${this.type}`, { params: { force: !!force } }).then(res => {
                 this.dialogVisible = false
                 if (res.code === 0 && res.data) {
                     this.url = res.data
@@ -138,7 +155,7 @@ export default {
         getDownTotal() {
             http.get(`user/InfoUploadList`).then(res => {
                 if (res.code === 0 && res.data) {
-                    const { total, people,resPeople,resTotal } = res?.data || {};
+                    const { total, people, resPeople, resTotal } = res?.data || {};
                     this.total = total;
                     this.people = people;
                     this.resPeople = resPeople;
@@ -149,18 +166,26 @@ export default {
                 this.$message.error('请求异常');
             })
         },
+        submit(){
+            http.get(`user/opinion`,{params:{text:this.textarea}}).then(res => {
+                if (res.code === 0 ) {
+                    this.$message.success('提交成功！');
+                }
+            }).catch(() => {
+            })
+        },
         numJump(num, key) {
             if (num > 100) {
-                let time = num/100;
+                let time = num / 100;
                 let i = 1;
                 let timer;
-                timer = ()=>setTimeout(() => {
-                    console.log(2222,num);
-                    if (i >10) {
+                timer = () => setTimeout(() => {
+                    console.log(2222, num);
+                    if (i > 10) {
                         this[key] = num;
                         return
                     }
-                    console.log(i * time,'222');
+                    console.log(i * time, '222');
                     this[key] = Math.floor(i * time);
                     i++;
                     timer()
@@ -208,17 +233,20 @@ export default {
 .dialog-footer {
     text-align: center;
 }
-.number{
+
+.number {
     font-size: 40px;
     color: #9900ff;
     font-weight: 700;
 }
-.numberpeo{
+
+.numberpeo {
     font-size: 32px;
     color: #ff00a6;
     font-weight: 700;
 }
-.downDialog{
+
+.downDialog {
     min-width: 300px;
 }
 </style>
