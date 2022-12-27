@@ -18,39 +18,63 @@ const routes =  [
       path: '/',
       component: Menu,
       redirect:'/login',
+      meta:{
+        title:'登录'
+      },
       children:[
           {
               name:'角色配置',
               path: 'user',
               component: UserConfig,
+              meta:{
+                title:'角色配置'
+              },
           },
           {
             name:'角色权限',
             path: 'user/power',
             component: UserRole,
+            meta:{
+              title:'角色权限'
+            },
           },
           {
             name:'接口配置',
             path: 'user/power/api',
             component: UserRoleApi,
+            meta:{
+              title:'接口配置'
+            },
           }
       ]
     },
     {
       path: '/login',
-      component: LoginPage
+      component: LoginPage,
+      meta:{
+        title:'接口配置'
+      },
     },
     {
         path: '/home',
-        component: Menu
+        component: Menu,
+        meta:{
+          title:'首页'
+        },
       },
     {
       path: '/about',
-      component: LoginPage
+      component: LoginPage,
+      meta:{
+        title:'关于'
+      },
     },
     {
       path: '/node',
-      component: nodeDown
+      component: nodeDown,
+      meta:{
+        title:'node版本镜像下载'
+      },
     }
   ]
  
@@ -58,7 +82,14 @@ const routes =  [
 const router = new VueRouter({
   routes
 })
-export  {routes}
+/* 第二步：在路由守卫router.beforeEach中设置如下代码 */
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    document.title = to.meta.title
+    next()
+  }
+})
  
 //4 导出router实例
 export default router
