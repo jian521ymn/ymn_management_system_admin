@@ -79,7 +79,7 @@ const routes =  [
   ]
  
 //3 创建router实例
-const router = new VueRouter({
+export const router = new VueRouter({
   routes
 })
 /* 第二步：在路由守卫router.beforeEach中设置如下代码 */
@@ -91,5 +91,5 @@ router.beforeEach((to, from, next) => {
   }
 })
  
-//4 导出router实例
-export default router
+//4 导出routes实例
+export {routes}

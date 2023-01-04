@@ -66,6 +66,7 @@ export default {
           }
         });
       }
+      console.log(routes,'routes');
       breadcrumbMap(routes)
       return breadcrumbText
     }

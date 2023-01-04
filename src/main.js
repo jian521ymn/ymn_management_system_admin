@@ -3,7 +3,7 @@ import ElementUI, { Message } from 'element-ui';
 import './assets/css/reset.css';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue'
-import router from './router'
+import {router} from './router'
 
 Vue.use(ElementUI);
 
@@ -40,5 +40,5 @@ const errorHandler = (err, vm, info)=>{
   
 }
 
-Vue.config.errorHandler = errorHandler;
+// Vue.config.errorHandler = errorHandler;
 Vue.prototype.$throw = (error)=> errorHandler(error,this);
